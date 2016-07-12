@@ -1,15 +1,11 @@
 package seleniumFramework.Utilities;
 
 import java.util.Hashtable;
-import org.openqa.selenium.support.*;
-
-import com.thoughtworks.selenium.Selenium;
 
 import org.openqa.selenium.WebDriver;
 
 import Fillo.Recordset;
 import seleniumFramework.Controls;
-import seleniumFramework.Enumerators.BrowserType;
 
 public class Environment {
 	
@@ -31,13 +27,7 @@ public class Environment {
 		return environmentDictionary.contains(strKey);
 	}
 	
-	
-	public static class Config {
 		
-		public static BrowserType browserName = BrowserType.Firefox;
-		public static String appURL = "";
-	}
-	
 	public static String currentRecord;
 	public static boolean debug;
 	public static String appName;

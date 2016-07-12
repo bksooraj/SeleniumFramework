@@ -10,14 +10,17 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 
+import seleniumFramework.Enumerators.BrowserType;
 import seleniumFramework.Utilities.Environment;
 import seleniumFramework.Utilities.ExcelUtils;
 import seleniumFramework.Utilities.ObjectFunctions;
 import seleniumFramework.Utilities.Reporter;
 
 public class Initializer {
-	public static void initialize() {
-		switch (Environment.Config.browserName) {
+	public static void initialize(BrowserType brType, String appURL) {
+		Config.browserName = brType;
+		Config.appURL = appURL;
+		switch (Config.browserName) {
 		case Chrome:
 			System.setProperty("webdriver.chrome.driver", "dependencies/chromedriver.exe");
 			driver = new ChromeDriver();
@@ -34,15 +37,14 @@ public class Initializer {
 		}
 
 		driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
-		driver.get(Environment.Config.appURL);
+		driver.get(Config.appURL);
 		Environment.ObjectFunction = new ObjectFunctions();
 		Environment.debug = false;
 		try {
 			Environment.controlObj = new Controls();
-			Assert.assertTrue(true);
 		} catch (Exception e) {
 			Reporter.Log("Unable to locate Controls file");
-			Assert.assertTrue(false);
+			Assert.fail("Unable to locate Controls file");
 			e.printStackTrace();
 			return;
 		}

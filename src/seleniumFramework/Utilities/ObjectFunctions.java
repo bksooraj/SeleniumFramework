@@ -1,10 +1,9 @@
 package seleniumFramework.Utilities;
 
+import static seleniumFramework.Utilities.Environment.controlObj;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import seleniumFramework.Controls;
-import static seleniumFramework.Utilities.Environment.*;
 public class ObjectFunctions {
 	
 	

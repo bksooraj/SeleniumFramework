@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver;
 
 public class Page {
 	
-	public Page(WebDriver driver) {
+	public Page() {
 
 		// TODO Auto-generated constructor stub
 	}

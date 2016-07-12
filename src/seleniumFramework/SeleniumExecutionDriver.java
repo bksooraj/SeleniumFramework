@@ -4,18 +4,11 @@ import static seleniumFramework.Utilities.Environment.driver;
 
 import javax.swing.JOptionPane;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import seleniumFramework.AppSpecific.Freecharge.FreechargeHome;
 import seleniumFramework.Enumerators.BrowserType;
 import seleniumFramework.Utilities.Environment;
 
-@RunWith(Parameterized.class)
+//@RunWith(Parameterized.class)
 public class SeleniumExecutionDriver {
 
 	public SeleniumExecutionDriver(String curParameter) {
@@ -23,55 +16,23 @@ public class SeleniumExecutionDriver {
 		Environment.currentRecord = curParameter;
 	}
 	
-	@Before
+//	@Before
 	public void initialize() {
-		Environment.Config.appURL = "http://freecharge.in";
-		Environment.Config.browserName = BrowserType.Firefox;
-		Initializer.initialize();
+		Initializer.initialize(BrowserType.Firefox, "http://freecharge.in");
 	}
 	
-	/*@Before
-	public void initialize() throws FilloException {
-		System.setProperty("webdriver.chrome.driver", "dependencies/chromedriver.exe");
-		driver = new ChromeDriver();
-		driver.manage().timeouts().implicitlyWait(120, TimeUnit.SECONDS);
-		driver.get("http://freecharge.in");
-		Environment.ObjectFunction = new ObjectFunctions();
-		Environment.debug=false;
-		try {
-			Environment.controlObj = new Controls();
-			Assert.assertTrue(true);
-		} catch (Exception e) {
-			Reporter.Log("Unable to locate Controls file");
-			Assert.assertTrue(false);
-			e.printStackTrace();
-			return;
-		}
-		
-		ExcelUtils xlBook = new ExcelUtils();
-		xlBook.open(Config.TestDataFilePath);
-		
-		Environment.curRow = xlBook.query(String.format("select * from TestData where TestID='%s'", curParam));
-		if (Environment.curRow.next()) {
-
-		}
-
-	}
-	*/
 	
-	
-	
-	@After
+//	@After
 	public void quit() {
 		driver.quit();
 	}
 	
-	@Parameters
+	//@Parameters
 	public static String[] getParams(){
 		return new String[] {"Freecharge1", "Freecharge2"};
 	}
 
-	@Test
+	//@Test
 	public void CheckLogin() {
 		FreechargeHome.fnLogin();
 		FreechargeHome.fnValidateBalance();
