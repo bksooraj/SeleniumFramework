@@ -16,7 +16,7 @@ import Fillo.Recordset;
  * @author SoorajKumarM
  * @version 1.0
  */
-class Controls {
+public class Controls {
 	private WebDriver driver;
 	private Connection con;
 	private ExcelUtils xlBook;

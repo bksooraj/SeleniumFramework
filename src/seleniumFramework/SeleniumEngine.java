@@ -3,6 +3,7 @@ package seleniumFramework;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -32,11 +33,11 @@ public class SeleniumEngine {
 		Config.appURL = appURL;
 		switch (Config.browserName) {
 		case Chrome:
-			System.setProperty("webdriver.chrome.driver", "dependencies/chromedriver.exe");
+			System.setProperty("webdriver.chrome.driver", Config.DriversPath + "chromedriver.exe");
 			Environment.driver = new ChromeDriver();
 			break;
 		case IE:
-			System.setProperty("webdriver.ie.driver", "dependencies/IEDriverServer.exe");
+			System.setProperty("webdriver.ie.driver", Config.DriversPath + "IEDriverServer.exe");
 			Environment.driver = new InternetExplorerDriver();
 			break;
 		case Safari:
@@ -69,5 +70,13 @@ public class SeleniumEngine {
 		} catch (Exception e) {
 			Assert.fail(String.format("No record found with '%s' test id.", strTestID));
 		}
+	}
+	
+	public WebElement getControl(String strObjectName) {
+		return this.Environment.controlObj.getControl(strObjectName);
+	}
+	
+	public void Quit() {
+		this.Environment.driver.quit();
 	}
 }

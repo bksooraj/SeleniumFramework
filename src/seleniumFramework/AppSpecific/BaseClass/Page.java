@@ -7,6 +7,7 @@ public class Page {
 	public SeleniumEngine sEngine;
 	public ObjectFunctions Operations;
 	public Page(SeleniumEngine sEngine) {
+		this.sEngine = sEngine;
 		this.Operations = sEngine.Operations;
 		// TODO Auto-generated constructor stub
 	}

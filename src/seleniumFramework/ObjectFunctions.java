@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select;
 import seleniumFramework.TextUtilities;
 
 public class ObjectFunctions {
-	Controls controlObj;
+	protected Controls controlObj;
 	SeleniumEngine sEngine;
 	public boolean Optional = false;
 
@@ -73,10 +73,8 @@ public class ObjectFunctions {
 	}
 
 	public String getText(String strObjectName) {
-
 		WebElement objReqElement = controlObj.getControl(strObjectName);
 		return objReqElement.getText();
-
 	}
 
 	public static boolean SelectRadio(java.util.List<WebElement> objReqElements, String strValue) {
