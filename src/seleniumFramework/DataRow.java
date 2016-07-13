@@ -1,9 +1,14 @@
-package seleniumFramework.Utilities;
-import static seleniumFramework.Utilities.Environment.*;
+package seleniumFramework;
 import java.util.ArrayList;
 
+import Fillo.Recordset;
+
 public class DataRow {
-	public static String Value(String strFieldName) {
+	private Recordset curRow;
+	public DataRow (Recordset curRow) {
+		this.curRow = curRow;
+	}
+	public String Value(String strFieldName) {
 		try {
 			ArrayList<String> arrFieldNames = curRow.getFieldNames();
 			if (arrFieldNames.contains(strFieldName)) {
@@ -18,7 +23,7 @@ public class DataRow {
 		}
 	}
 	
-	public static boolean Exist(String strFieldName){
+	public boolean Exist(String strFieldName){
 		try {
 			ArrayList<String> arrFieldNames = curRow.getFieldNames();
 			if (arrFieldNames.contains(strFieldName)) {

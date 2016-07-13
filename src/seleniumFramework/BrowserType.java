@@ -1,4 +1,4 @@
-package seleniumFramework.Enumerators;
+package seleniumFramework;
 
 public enum BrowserType {
 		IE,

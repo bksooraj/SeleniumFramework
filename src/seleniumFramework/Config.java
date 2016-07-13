@@ -1,11 +1,12 @@
 package seleniumFramework;
 
-import seleniumFramework.Enumerators.BrowserType;
-
 public class Config {
-	public static String ControlsFilePath = "TestData\\Controls.xlsx";
-	public static String TestDataFilePath = "TestData\\TestData.xlsx";
-	public static BrowserType browserName = BrowserType.Firefox;
-	public static String appURL = "";
+	public  String ControlsFilePath = "TestData\\Controls.xlsx";
+	public  String TestDataFilePath = "TestData\\TestData.xlsx";
+	public  BrowserType browserName = BrowserType.Firefox;
+	protected  String appURL = "";
 	
+	public String getAppURL() {
+		return appURL;
+	}
 }

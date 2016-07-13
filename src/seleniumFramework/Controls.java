@@ -1,16 +1,14 @@
 package seleniumFramework;
+
+import static seleniumFramework.TextUtilities.fnParseData;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import Fillo.Connection;
 import Fillo.Recordset;
-import seleniumFramework.Enumerators.ControlPropertyName;
-import seleniumFramework.Utilities.Environment;
-import seleniumFramework.Utilities.ExcelUtils;
-import seleniumFramework.Utilities.Reporter;
 
-import static seleniumFramework.Utilities.TextUtilities.*;
 /**
  * Controls Class will provide methods to get Controls from Controls sheet and
  * form WebElements.
@@ -18,16 +16,18 @@ import static seleniumFramework.Utilities.TextUtilities.*;
  * @author SoorajKumarM
  * @version 1.0
  */
-public class Controls {
+class Controls {
 	private WebDriver driver;
 	private Connection con;
 	private ExcelUtils xlBook;
+	private SeleniumEngine sEngine;
 
-	public Controls() throws Exception {
-		this.driver = Environment.driver;
+	public Controls(SeleniumEngine sEngine) throws Exception {
+		this.sEngine = sEngine;
+		this.driver = this.sEngine.Environment.driver;
 		xlBook = new ExcelUtils();
-		if (!xlBook.open(Config.ControlsFilePath)) {
-			throw new Exception("Unable to get Connection to ".concat(Config.ControlsFilePath));
+		if (!xlBook.open(sEngine.Config.ControlsFilePath)) {
+			throw new Exception("Unable to get Connection to ".concat(sEngine.Config.ControlsFilePath));
 		}
 	}
 
@@ -82,7 +82,7 @@ public class Controls {
 	}
 
 	private WebElement getTestObject(String strTestObjectName, WebElement objParent) {
-
+		DataRow dataRow = sEngine.DataRow;
 		By reqIdentification = null;
 		Recordset objRecordSet;
 		WebElement reqObject = null;
@@ -90,11 +90,12 @@ public class Controls {
 			objRecordSet = xlBook.query("Select * from Controls where LogicalName='" + strTestObjectName + "'");
 			if (objRecordSet.next()) {
 				if (!objRecordSet.getField(ControlPropertyName.Id.toString()).isEmpty()) {
-					reqIdentification = By.id(fnParseData(objRecordSet.getField(ControlPropertyName.Id.toString())));
+					reqIdentification = By.id(fnParseData(objRecordSet.getField(ControlPropertyName.Id.toString()),dataRow));
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.Name.toString()).isEmpty()) {
-					reqIdentification = By.name(fnParseData(objRecordSet.getField(ControlPropertyName.Name.toString())));
+					reqIdentification = By
+							.name(fnParseData(objRecordSet.getField(ControlPropertyName.Name.toString()),dataRow));
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.TagName.toString()).isEmpty()) {
@@ -102,7 +103,8 @@ public class Controls {
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.LinkText.toString()).isEmpty()) {
-					reqIdentification = By.linkText(fnParseData(objRecordSet.getField(ControlPropertyName.LinkText.toString())));
+					reqIdentification = By
+							.linkText(fnParseData(objRecordSet.getField(ControlPropertyName.LinkText.toString()),dataRow));
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.ClassName.toString()).isEmpty()) {
@@ -110,12 +112,13 @@ public class Controls {
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.PartialLinkText.toString()).isEmpty()) {
-					reqIdentification = By
-							.partialLinkText(fnParseData(objRecordSet.getField(ControlPropertyName.PartialLinkText.toString())));
+					reqIdentification = By.partialLinkText(
+							fnParseData(objRecordSet.getField(ControlPropertyName.PartialLinkText.toString()),dataRow));
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				if (!objRecordSet.getField(ControlPropertyName.XPath.toString()).isEmpty()) {
-					reqIdentification = By.xpath(fnParseData(objRecordSet.getField(ControlPropertyName.XPath.toString())));
+					reqIdentification = By
+							.xpath(fnParseData(objRecordSet.getField(ControlPropertyName.XPath.toString()),dataRow));
 					Reporter.Log("Function:getTestObject, Identification:" + reqIdentification.toString());
 				}
 				Reporter.Log(reqIdentification.toString());

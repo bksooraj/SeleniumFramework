@@ -1,4 +1,4 @@
-package seleniumFramework.Utilities;
+package seleniumFramework;
 
 import Exception.FilloException;
 import Fillo.Connection;

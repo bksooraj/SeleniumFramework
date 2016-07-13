@@ -1,10 +1,10 @@
-package seleniumFramework.Utilities;
+package seleniumFramework;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextUtilities {
-	public static String fnParseData(String strText){
+	public static String fnParseData(String strText, DataRow dataRow){
 		String mySentence = strText;
 		String regEx = "\\[(.*?)\\]";
 		Pattern p = Pattern.compile(regEx);
@@ -23,7 +23,7 @@ public class TextUtilities {
 					strToBeParsed = m.group(1);
 				}
 				strToBeParsed = "[" + strToBeParsed + "]";
-				mySentence = mySentence.replace(strToBeParsed, fnParse(strToBeParsed));
+				mySentence = mySentence.replace(strToBeParsed, fnParse(strToBeParsed, dataRow));
 				
 			}
 			m= p.matcher(mySentence);
@@ -33,18 +33,16 @@ public class TextUtilities {
 			
 		}
 		
-	private static String fnParse(String strText){
+	private static String fnParse(String strText, DataRow dataRow){
 	String retText = strText.substring(1, strText.length()-1);
 	
 	if(Environment.Exist(retText)){
 		retText = Environment.Value(retText);
-	} else if (DataRow.Exist(retText)){
-		retText = DataRow.Value(retText);
+	} else if (dataRow.Exist(retText)){
+		retText = dataRow.Value(retText);
 	} else {
 		retText = strText;
 	}
-		
-	Reporter.Log("Replacing"+ strText + " with " + retText);
 	return retText;
 }
 }
