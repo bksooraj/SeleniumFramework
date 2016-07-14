@@ -12,8 +12,9 @@ public class DataRow {
 		try {
 			ArrayList<String> arrFieldNames = curRow.getFieldNames();
 			if (arrFieldNames.contains(strFieldName)) {
-				System.out.println(curRow.getField(strFieldName).toString());
-				return curRow.getField(strFieldName).toString();
+				String strValue = curRow.getField(strFieldName).toString();
+				strValue = TextUtilities.fnParseData(strValue,this);
+				return strValue;
 			} else {
 				return "";
 			}
