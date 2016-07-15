@@ -43,6 +43,7 @@ public class ExcelUtils {
 			return objRecordSet;
 		} catch (FilloException e) {
 			// TODO Auto-generated catch block
+			Reporter.Report(String.format("Error occured while Querying - '%s'", strQuery), false);
 			e.printStackTrace();
 			return null;
 		}
