@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ObjectFunctions {
@@ -124,7 +123,6 @@ public class ObjectFunctions {
 	}
 
 	private static boolean SelectByVisibleText(WebElement objReqElement, String strValue) {
-		Select objSelect;
 		// Check if the WebElement can be casted to Select element
 		/*	if (objReqElement instanceof Select) {
 			Reporter.Log(objReqElement.toString() + " is a Select element");

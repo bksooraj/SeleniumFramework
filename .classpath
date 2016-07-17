@@ -5,7 +5,7 @@
 	<classpathentry kind="lib" path="lib/Fillo/Fillo-1.13.jar"/>
 	<classpathentry kind="lib" path="lib/JUnit/junit-4.12.jar"/>
 	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/selenium-java-2.47.1-srcs.jar"/>
-	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/selenium-java-2.47.1.jar"/>
+	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/selenium-java-2.47.1.jar" sourcepath="/client/src/org/openqa/selenium/remote"/>
 	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/libs/apache-mime4j-0.6.jar"/>
 	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/libs/bsh-1.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/Selenium/selenium-2.47.1/libs/cglib-nodep-2.1_3.jar"/>

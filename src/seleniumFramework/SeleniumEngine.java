@@ -1,12 +1,20 @@
 package seleniumFramework;
 
+import java.net.URL;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import Fillo.Recordset;
 
@@ -25,20 +33,74 @@ public class SeleniumEngine {
 		Config.appURL = strURL;
 		Environment = new Environment();
 		initialize(brType, strURL);
-
 	}
 
 	private void initialize(BrowserType brType, String appURL) throws Exception {
 		Config.browserName = brType;
 		Config.appURL = appURL;
+		boolean blnLaunchBrowser = true;
+		Properties prop = SessionDetails.getSessionDetails();
+
 		switch (Config.browserName) {
 		case Chrome:
 			System.setProperty("webdriver.chrome.driver", Config.DriversPath + "chromedriver.exe");
-			Environment.driver = new ChromeDriver();
+
+			if (prop == null) {
+				blnLaunchBrowser = true;
+			} else {
+				try {
+					Capabilities cp = DesiredCapabilities.chrome();
+					RemoteWebDriverEx rwdx = new RemoteWebDriverEx(new URL(prop.getProperty(SessionDetails.HOST_NAME)),
+							cp);
+					rwdx.close();
+					rwdx.setOldSession(prop.getProperty(SessionDetails.SESSION_NAME));
+					Environment.driver = (WebDriver) rwdx;
+					blnLaunchBrowser = false;
+				} catch (Exception e) {
+					blnLaunchBrowser = true;
+				}
+			}
+			if (blnLaunchBrowser) {
+				ChromeDriverService cds = ChromeDriverService.createDefaultService();
+				Capabilities cp = DesiredCapabilities.chrome();
+				WebDriver objWebDriver = new ChromeDriver(cds, cp);
+				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
+				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), cds.getUrl(), brType);
+				Environment.driver = (WebDriver) rwd;
+			}
 			break;
 		case IE:
 			System.setProperty("webdriver.ie.driver", Config.DriversPath + "IEDriverServer.exe");
-			Environment.driver = new InternetExplorerDriver();
+
+			if (prop == null) {
+				seleniumFramework.Reporter.Log("No Session details, Start new Internet explorer");
+				blnLaunchBrowser = true;
+			} else {
+				try {
+					seleniumFramework.Reporter.Log("Starting Internet explorer with existing Driver Server");
+					Capabilities cp = DesiredCapabilities.internetExplorer();
+					RemoteWebDriverEx rwdx = new RemoteWebDriverEx(new URL(prop.getProperty(SessionDetails.HOST_NAME)),
+							cp);
+					rwdx.close();
+					rwdx.setOldSession(prop.getProperty(SessionDetails.SESSION_NAME));
+					Environment.driver = (WebDriver) rwdx;
+					blnLaunchBrowser = false;
+				} catch (Exception e) {
+					seleniumFramework.Reporter.Log("Issue while connecting to existing Internet explorer");
+					blnLaunchBrowser = true;
+				}
+			}
+			if (blnLaunchBrowser) {
+				seleniumFramework.Reporter.Log("Launching Internet Explorer");
+				InternetExplorerDriverService ids = InternetExplorerDriverService.createDefaultService();
+				Capabilities cp = DesiredCapabilities.internetExplorer();
+				WebDriver objWebDriver = new InternetExplorerDriver(ids, cp);
+				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
+				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), ids.getUrl(), brType);
+				Environment.driver = (WebDriver) rwd;
+			}
+
+			// Environment.driver = new InternetExplorerDriver();
 			break;
 		case Safari:
 			break;
@@ -50,8 +112,8 @@ public class SeleniumEngine {
 		Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 		Environment.driver.get(Config.appURL);
 		try {
-		Environment.ObjectFunction = new ObjectFunctions(this);
-		this.Operations = Environment.ObjectFunction; 
+			Environment.ObjectFunction = new ObjectFunctions(this);
+			this.Operations = Environment.ObjectFunction;
 		} catch (Exception e) {
 			throw new Exception("Unable to create Controls object, check Controls file is available");
 		}
@@ -61,7 +123,7 @@ public class SeleniumEngine {
 
 	public void setDataRow(String strTestID) {
 		this.curTestID = strTestID;
-		Recordset curRow; 
+		Recordset curRow;
 		curRow = xlBook.query(String.format("select * from TestData where TestID='%s'", strTestID));
 
 		try {
@@ -71,11 +133,11 @@ public class SeleniumEngine {
 			Assert.fail(String.format("No record found with '%s' test id.", strTestID));
 		}
 	}
-	
+
 	public WebElement getControl(String strObjectName) {
 		return this.Environment.controlObj.getControl(strObjectName);
 	}
-	
+
 	public void Quit() {
 		this.Environment.driver.quit();
 	}
