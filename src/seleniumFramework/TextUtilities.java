@@ -3,6 +3,7 @@ package seleniumFramework;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,4 +61,28 @@ public class TextUtilities {
 		}
 		return retText;
 	}
+
+	public static String fnEscapeForXpath(String strText) {
+		String strEscapeText = strText;
+		if (strEscapeText.contains("'")) {
+			StringTokenizer st = new StringTokenizer(strEscapeText, "'");
+			StringBuilder strEscapedText = new StringBuilder("concat(");
+			while (st.hasMoreTokens()) {
+				strEscapedText.append("'").append(st.nextToken()).append("',").append("\"'\"").append(",");
+			}
+			String sEscapedText = strEscapedText.substring(0, strEscapedText.length() - 5).concat(")");
+			return sEscapedText;
+		} else if (strEscapeText.contains("\"")) {
+			StringTokenizer st = new StringTokenizer(strEscapeText, "\"");
+			StringBuilder strEscapedText = new StringBuilder("concat('");
+			while (st.hasMoreTokens()) {
+				strEscapedText.append("'").append(st.nextToken()).append("',").append("'\"'").append(",");
+			}
+			String sEscapedText = strEscapedText.substring(0, strEscapedText.length() - 5).concat(")");
+			return sEscapedText;
+		} else {
+			return "'".concat(strEscapeText).concat("'");
+		}
+	}
+
 }

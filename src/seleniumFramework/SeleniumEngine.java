@@ -24,10 +24,14 @@ public class SeleniumEngine {
 	public String curTestID;
 	public DataRow DataRow;
 	public ObjectFunctions Operations;
+	public WinObjectsFunctions WinOperations;
+	public Optional Optional;
 	public static Reporter Reporter;
 	private ExcelUtils xlBook;
+	public static boolean newBrowser = true;
 
 	public SeleniumEngine(BrowserType brType, String strURL) throws Exception {
+
 		Config = new Config();
 		Config.browserName = brType;
 		Config.appURL = strURL;
@@ -39,9 +43,17 @@ public class SeleniumEngine {
 		Config.browserName = brType;
 		Config.appURL = appURL;
 		boolean blnLaunchBrowser = true;
-		Properties prop = SessionDetails.getSessionDetails();
+		Properties prop;
+		if (!newBrowser) {
+			prop = SessionDetails.getSessionDetails();
+			blnLaunchBrowser = false;
+		} else {
+			prop = null;
+			blnLaunchBrowser = true;
+		}
+		switch (Config.browserName)
 
-		switch (Config.browserName) {
+		{
 		case Chrome:
 			System.setProperty("webdriver.chrome.driver", Config.DriversPath + "chromedriver.exe");
 
@@ -67,6 +79,7 @@ public class SeleniumEngine {
 				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
 				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), cds.getUrl(), brType);
 				Environment.driver = (WebDriver) rwd;
+				Environment.driver.get(Config.appURL);
 			}
 			break;
 		case IE:
@@ -98,6 +111,7 @@ public class SeleniumEngine {
 				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
 				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), ids.getUrl(), brType);
 				Environment.driver = (WebDriver) rwd;
+				Environment.driver.get(Config.appURL);
 			}
 
 			// Environment.driver = new InternetExplorerDriver();
@@ -106,13 +120,17 @@ public class SeleniumEngine {
 			break;
 		case Firefox:
 			Environment.driver = new FirefoxDriver();
+			Environment.driver.get(Config.appURL);
 			break;
 		}
 
 		Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-		Environment.driver.get(Config.appURL);
+		
 		try {
 			Environment.ObjectFunction = new ObjectFunctions(this);
+			this.WinOperations = new WinObjectsFunctions(this);
+			this.Optional = new Optional(this);
+			
 			this.Operations = Environment.ObjectFunction;
 		} catch (Exception e) {
 			throw new Exception("Unable to create Controls object, check Controls file is available");

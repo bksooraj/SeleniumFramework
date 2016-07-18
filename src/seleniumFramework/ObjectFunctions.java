@@ -1,16 +1,17 @@
 package seleniumFramework;
 
+import static seleniumFramework.Reporter.handleException;
+
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 public class ObjectFunctions {
 	protected Controls controlObj;
 	SeleniumEngine sEngine;
-	private static boolean Optional = false;
+	protected static boolean Optional = false;
 
 	public void setOptional(boolean blnOptional) {
 		if (blnOptional) {
@@ -36,6 +37,7 @@ public class ObjectFunctions {
 	public ObjectFunctions(SeleniumEngine sEngine) throws Exception {
 		this.sEngine = sEngine;
 		controlObj = new Controls(sEngine);
+		sEngine.Environment.controlObj = controlObj;
 	}
 
 	/**
@@ -48,9 +50,10 @@ public class ObjectFunctions {
 	 *         <i>false</i> if the operation is failed.
 	 */
 	public boolean SetText(String strObjectName, String strValue) {
-		
+
 		WebElement objReqElement = this.controlObj.getControl(strObjectName);
-		Reporter.Log(String.format("ObjectFunctions.SetText(String,String):Set '%s' in '%s' object", strValue, strObjectName));
+		Reporter.Log(String.format("ObjectFunctions.SetText(String,String):Set '%s' in '%s' object", strValue,
+				strObjectName));
 		strValue = TextUtilities.fnParseData(strValue, sEngine.DataRow);
 		Reporter.Log(String.format("Set '%s' in '%s' object", strValue, strObjectName));
 		return SetText(objReqElement, strObjectName, strValue);
@@ -68,7 +71,7 @@ public class ObjectFunctions {
 	 */
 	public boolean SetText(String strObjectName) {
 		String strVal = sEngine.DataRow.Value(strObjectName);
-		Reporter.Log(String.format("ObjectFunctions.SetText(String):Set '%s' into '%s' object" , strVal, strObjectName));
+		Reporter.Log(String.format("ObjectFunctions.SetText(String):Set '%s' into '%s' object", strVal, strObjectName));
 		SetText(strObjectName, strVal);
 		return true;
 	}
@@ -94,9 +97,9 @@ public class ObjectFunctions {
 	public static boolean SetText(WebElement objReqElement, String strObjectName, String strValue) {
 		if (strValue.isEmpty())
 			return true;
-		
-		if(objReqElement==null){
-			Reporter.Report(String.format("'%s' object is null, unable to set '%s'",strObjectName,strValue), false);
+
+		if (objReqElement == null) {
+			Reporter.Report(String.format("'%s' object is null, unable to set '%s'", strObjectName, strValue), false);
 			return true;
 		} else {
 			Reporter.Log(objReqElement.getTagName().concat(" tag name for given element."));
@@ -123,70 +126,56 @@ public class ObjectFunctions {
 	}
 
 	private static boolean SelectByVisibleText(WebElement objReqElement, String strValue) {
-		// Check if the WebElement can be casted to Select element
-		/*	if (objReqElement instanceof Select) {
-			Reporter.Log(objReqElement.toString() + " is a Select element");
-			objSelect = (Select) objReqElement;
-			Reporter.Log(objReqElement.toString() + " is casted to Select element");
-			try {
-				Reporter.Log(String.format("going to selectByVisibleText '%s'", strValue));
-				objSelect.selectByVisibleText(strValue);
-				Reporter.Log(String.format("selected '%s'", strValue));
-				return true;
-			} catch (Exception e1) {
-				Reporter.Log(String.format("E2 error while selectByVisibleText '%s'", strValue));
-				try {
-					Reporter.Log(String.format("going to selectByValue '%s'", strValue));
-					objSelect.selectByValue(strValue);
-					Reporter.Log(String.format("selected '%s'", strValue));
-					return true;
-				} catch (Exception e2) {
-					Reporter.Log(String.format("E2 error while selectByValue '%s'", strValue));
-					try {
-						Reporter.Log(String.format("going to selectByIndex '%s'", strValue));
-						objSelect.selectByIndex(Integer.valueOf(strValue));
-						Reporter.Log(String.format("selected '%s'", strValue));
-						return true;
-					} catch (Exception e3) {
-						Reporter.Log(String.format("E3 error while selectByIndex '%s'", strValue));
-						throw e3;
-					}
-				}
-			}
-		} else {*/
-			WebElement optElement;
-			try {
-				Thread.sleep(5000);
-				optElement = objReqElement.findElement(By.xpath(String.format(".//Option[@value='%s']", strValue)));
+		String strEscapedValue = TextUtilities.fnEscapeForXpath(strValue);
+		WebElement optElement;
+		try {
+			Thread.sleep(500);
+
+			optElement = objReqElement
+					.findElement(By.xpath(String.format("./option/./text()[contains(.,%s)]/..", strEscapedValue)));
+			if (optElement.getText().replace("\n\r", "").trim().equalsIgnoreCase(strValue)) {
 				optElement.click();
 				Reporter.Log("DDL-Selection1");
-				Thread.sleep(10000);
 				return true;
-			} catch (Exception e) {
+			} else {
+				throw new Exception(String.format("'%s' not found in given object.", strValue));
+			}
+		} catch (Exception e) {
+			try {
+				optElement = objReqElement
+						.findElement(By.xpath(String.format(".//Option[text()=%s]", strEscapedValue)));
+				optElement.click();
+				Reporter.Log("DDL-Selection2");
+				return true;
+			} catch (Exception e2) {
 				try {
-					optElement = objReqElement.findElement(By.xpath(String.format(".//Option[text()='%s']", strValue)));
+					optElement = objReqElement
+							.findElement(By.xpath(String.format(".//Option[.=%s]", strEscapedValue)));
 					optElement.click();
-					Reporter.Log("DDL-Selection2");
+					Reporter.Log("DDL-Selection3");
 					return true;
-				} catch (Exception e2) {
+				} catch (Exception e3) {
 					try {
-						optElement = objReqElement.findElement(By.xpath(String.format(".//Option[.='%s']", strValue)));
+						optElement = objReqElement
+								.findElement(By.xpath(String.format(".//Option[%s]", strValue)));
 						optElement.click();
-						Reporter.Log("DDL-Selection3");
+						Reporter.Log("DDL-Selection4");
 						return true;
-					} catch (Exception e3) {
+					} catch (Exception e4) {
 						try {
-							optElement = objReqElement.findElement(By.xpath(String.format(".//Option[%s]", strValue)));
+							optElement = objReqElement
+									.findElement(By.xpath(String.format(".//Option[@value=%s]", strEscapedValue)));
 							optElement.click();
-							Reporter.Log("DDL-Selection4");
-							return true;
-						} catch (Exception e4) {
-							Reporter.Log("DDL-Selection5- Unable to select dropdown");
-							throw e4;
+							Reporter.Log("DDL-Selection5");
+						} catch (Exception e5) {
+
 						}
+						Reporter.Log("DDL-Selection5- Unable to select dropdown");
+						throw e4;
 					}
 				}
 			}
+		}
 	}
 
 	public boolean Click(String strObjectName) {
@@ -250,22 +239,7 @@ public class ObjectFunctions {
 		}
 	}
 
-	/**
-	 * 
-	 * @param strDescription
-	 *            Description to be written to the report
-	 * @param e
-	 *            Exception object which needs to be handled
-	 * @return returns true if the step is Optional and false if the step is
-	 *         Required
-	 */
-	private static boolean handleException(String strDescription, Exception e) {
-		if (Optional) {
-			Reporter.Report(strDescription, true);
-			return true;
-		} else {
-			Reporter.Report(strDescription, false);
-			return false;
-		}
-	}
+	
+
+
 }
