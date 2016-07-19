@@ -4,6 +4,8 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import static seleniumFramework.Reporter.*;
 
+import java.util.concurrent.TimeUnit;
+
 public class WinObjectsFunctions {
 	private SeleniumEngine sEngine;
 	private WebDriver driver;
@@ -15,30 +17,50 @@ public class WinObjectsFunctions {
 
 	public void Accept() {
 		try {
-			Alert alert = driver.switchTo().alert();
+			driver.manage().timeouts().implicitlyWait(Config.iLongWait, TimeUnit.SECONDS);
+			Alert alert = getAlert(driver);
 			alert.accept();
+			ObjectFunctions.Wait(1000);
 		} catch (Exception e) {
 			handleException("Alert window is not displayed to accept", e);
+		} finally {
+			driver.manage().timeouts().implicitlyWait(Config.iShortWait, TimeUnit.SECONDS);
 		}
 	}
 
 	public void Dismiss() {
 		try {
-			Alert alert = driver.switchTo().alert();
+			driver.manage().timeouts().implicitlyWait(Config.iLongWait, TimeUnit.SECONDS);
+			Alert alert = getAlert(driver);
 			alert.dismiss();
+			ObjectFunctions.Wait(1000);
 		} catch (Exception e) {
 			handleException("Alert window is not displayed to dismiss", e);
+		} finally {
+			driver.manage().timeouts().implicitlyWait(Config.iShortWait, TimeUnit.SECONDS);
 		}
 
 	}
 
 	public String GetText() {
 		try {
-			return this.driver.switchTo().alert().getText();
+			return getAlert(this.driver).getText();
 		} catch (Exception e) {
 			handleException("Alert window is not displayed.  Text could not be retrieved.", e);
 			return "";
 		}
+	}
+
+	private Alert getAlert(WebDriver alertDriver) {
+		for (int i = 0; i < 20; i++) {
+			try {
+				ObjectFunctions.Wait(2000);
+				return alertDriver.switchTo().alert();
+			} catch (Exception e) {
+				
+			}
+		}
+		return null;
 	}
 
 }

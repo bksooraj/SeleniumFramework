@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 public class ObjectFunctions {
 	protected Controls controlObj;
 	SeleniumEngine sEngine;
@@ -38,6 +39,9 @@ public class ObjectFunctions {
 		this.sEngine = sEngine;
 		controlObj = new Controls(sEngine);
 		sEngine.Environment.controlObj = controlObj;
+
+		sEngine.WinOperations = new WinObjectsFunctions(sEngine);
+		// sEngine.Optional = new Optional(sEngine);
 	}
 
 	/**
@@ -149,15 +153,13 @@ public class ObjectFunctions {
 				return true;
 			} catch (Exception e2) {
 				try {
-					optElement = objReqElement
-							.findElement(By.xpath(String.format(".//Option[.=%s]", strEscapedValue)));
+					optElement = objReqElement.findElement(By.xpath(String.format(".//Option[.=%s]", strEscapedValue)));
 					optElement.click();
 					Reporter.Log("DDL-Selection3");
 					return true;
 				} catch (Exception e3) {
 					try {
-						optElement = objReqElement
-								.findElement(By.xpath(String.format(".//Option[%s]", strValue)));
+						optElement = objReqElement.findElement(By.xpath(String.format(".//Option[%s]", strValue)));
 						optElement.click();
 						Reporter.Log("DDL-Selection4");
 						return true;
@@ -239,7 +241,11 @@ public class ObjectFunctions {
 		}
 	}
 
-	
-
+	public static void Wait(int iMilliSeconds) {
+		try {
+			Thread.sleep(iMilliSeconds);
+		} catch (InterruptedException e) {
+		}
+	}
 
 }

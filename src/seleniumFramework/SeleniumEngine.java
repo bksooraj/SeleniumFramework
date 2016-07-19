@@ -25,7 +25,7 @@ public class SeleniumEngine {
 	public DataRow DataRow;
 	public ObjectFunctions Operations;
 	public WinObjectsFunctions WinOperations;
-	public Optional Optional;
+	//public Optional Optional;
 	public static Reporter Reporter;
 	private ExcelUtils xlBook;
 	public static boolean newBrowser = true;
@@ -128,8 +128,7 @@ public class SeleniumEngine {
 		
 		try {
 			Environment.ObjectFunction = new ObjectFunctions(this);
-			this.WinOperations = new WinObjectsFunctions(this);
-			this.Optional = new Optional(this);
+
 			
 			this.Operations = Environment.ObjectFunction;
 		} catch (Exception e) {
