@@ -1,5 +1,9 @@
 package seleniumFramework;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import Exception.FilloException;
 import Fillo.Connection;
 import Fillo.Fillo;
@@ -42,14 +46,68 @@ public class ExcelUtils {
 			objRecordSet = con.executeQuery(strQuery);
 			return objRecordSet;
 		} catch (FilloException e) {
-			// TODO Auto-generated catch block
 			Reporter.Report(String.format("Error occured while Querying - '%s'", strQuery), false);
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	
+	public int insert(String strQuery) {
+		try {
+			Reporter.Log("inserting - " + strQuery);
+			return con.executeUpdate(strQuery);
+		} catch (FilloException e) {
+			e.printStackTrace();
+			Reporter.Report(String.format("Error occured while inserting - '%s'", strQuery), false);
+			return 0;
+		}
+	}
+
+	public int updateEnvironmentVariables(String strTestID, String strSheetName, Boolean blnRequireAll) {
+		Hashtable<String, String> environmentData = Environment.getHashTable();
+		Enumeration<String> arrKeys = environmentData.keys();
+		StringBuilder strUpdateQuery = new StringBuilder();
+		StringBuilder strUnlistedColumns = new StringBuilder();
+		try {
+			ArrayList<String> arrFieldNames = this.objRecordSet.getFieldNames();
+			String strElem = null;
+			do {
+				try {
+					strElem = null;
+					strElem = arrKeys.nextElement();
+				} catch (Exception e1) {
+					break;
+				}
+				if (arrFieldNames.contains(strElem)) {
+					strUpdateQuery.append(strElem).append("='").append(environmentData.get(strElem)).append("',");
+				} else {
+					if(blnRequireAll)
+					strUnlistedColumns.append(strElem).append("=").append(environmentData.get(strElem)).append(",");
+				}
+			} while (strElem != null);
+
+			StringBuilder strFinalQuery = new StringBuilder();
+			if (strUpdateQuery.length() > 0) {
+				strFinalQuery.append(strUpdateQuery.substring(0, strUpdateQuery.length() - 1));
+				Reporter.Log("Columns-" + strFinalQuery.toString());
+			}
+			if (strUnlistedColumns.length() > 0) {
+				if (strFinalQuery.length() > 0) {
+					strFinalQuery.append(",");
+				} 
+				strFinalQuery.append(" Description='");
+				
+				strFinalQuery.append(strUnlistedColumns.substring(0, strUnlistedColumns.length() - 2)).append("'");
+			}
+			Reporter.Log(strFinalQuery.toString());
+			return con.executeUpdate(String.format("update %s set %s where TestID='%s'", strSheetName,
+					strFinalQuery.toString(), strTestID));
+		} catch (FilloException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}
+	}
 
 	/**
 	 * Closes the associated connection

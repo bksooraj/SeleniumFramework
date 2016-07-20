@@ -217,7 +217,14 @@ public class ObjectFunctions {
 
 	public String getText(String strObjectName) {
 		WebElement objReqElement = controlObj.getControl(strObjectName);
-		return objReqElement.getText();
+		switch(objReqElement.getTagName().toUpperCase().trim()) {
+		case "SELECT":
+		case "INPUT":
+			return objReqElement.getAttribute("value");
+		default:
+			return objReqElement.getText();
+		}
+		
 	}
 
 	public static boolean SelectRadio(java.util.List<WebElement> objReqElements, String strValue) {

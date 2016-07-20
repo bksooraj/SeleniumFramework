@@ -8,7 +8,11 @@ public class Environment {
 
 	private static Hashtable<String, String> environmentDictionary = new Hashtable<>();
 
-	public static String Value(String strKey) {
+	protected static Hashtable<String, String>  getHashTable() {
+		return environmentDictionary;
+	}
+	
+ 	public static String Value(String strKey) {
 		if (environmentDictionary.containsKey(strKey)) {
 			return environmentDictionary.get(strKey).toString();
 		} else {

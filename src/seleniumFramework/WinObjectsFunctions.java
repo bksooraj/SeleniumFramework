@@ -1,17 +1,16 @@
 package seleniumFramework;
 
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.WebDriver;
-import static seleniumFramework.Reporter.*;
+import static seleniumFramework.Reporter.handleException;
 
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.WebDriver;
+
 public class WinObjectsFunctions {
-	private SeleniumEngine sEngine;
 	private WebDriver driver;
 
 	public WinObjectsFunctions(SeleniumEngine sEngine) {
-		this.sEngine = sEngine;
 		this.driver = sEngine.Environment.driver;
 	}
 

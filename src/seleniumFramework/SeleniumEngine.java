@@ -155,6 +155,9 @@ public class SeleniumEngine {
 		return this.Environment.controlObj.getControl(strObjectName);
 	}
 
+	public int updateOutput(boolean blnAllEnvironmentVariables){
+		return this.xlBook.updateEnvironmentVariables(this.curTestID, "TestData", blnAllEnvironmentVariables);
+	}
 	public void Quit() {
 		this.Environment.driver.quit();
 	}
