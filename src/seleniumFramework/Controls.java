@@ -70,6 +70,7 @@ public class Controls {
 	}
 
 	public WebElement getControl(String controlLogicalName) {
+		sEngine.Environment.driver.switchTo().defaultContent();
 		String objectHierarchy = this.getHierarchy(controlLogicalName);
 		String[] strObjects = objectHierarchy.split(",");
 		WebElement curReqObject = null;
@@ -142,6 +143,7 @@ public class Controls {
 						break;
 					case "FRAME":
 						this.driver.switchTo().frame(reqObject);
+						reqObject = null;
 					default:
 					}
 				}

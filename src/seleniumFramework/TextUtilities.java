@@ -85,4 +85,9 @@ public class TextUtilities {
 		}
 	}
 
+	public static int getKeyCode(Byte byChar) {
+		Reporter.Log(byChar.toString());
+		return byChar.byteValue();
+		
+	}
 }

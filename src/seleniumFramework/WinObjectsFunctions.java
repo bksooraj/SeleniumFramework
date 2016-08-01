@@ -4,8 +4,11 @@ import static seleniumFramework.Reporter.handleException;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.auth.InvalidCredentialsException;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.security.Credentials;
+import org.openqa.selenium.security.UserAndPassword;
 
 public class WinObjectsFunctions {
 	private WebDriver driver;
@@ -48,6 +51,13 @@ public class WinObjectsFunctions {
 			handleException("Alert window is not displayed.  Text could not be retrieved.", e);
 			return "";
 		}
+	}
+	
+	public void SetCredentials(String strUserName, String strPassword){
+		Alert credAlert = getAlert(driver);
+		Credentials cred = new UserAndPassword(strUserName, strPassword);
+		credAlert.setCredentials(cred);
+		
 	}
 
 	private Alert getAlert(WebDriver alertDriver) {

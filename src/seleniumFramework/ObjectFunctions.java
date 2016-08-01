@@ -180,10 +180,6 @@ public class ObjectFunctions {
 		}
 	}
 
-	public boolean Click(String strObjectName) {
-		WebElement objReqElement = controlObj.getControl(strObjectName);
-		return Click(objReqElement, strObjectName);
-	}
 
 	/**
 	 * Clicks the given WebElement object and returns <i>true</i> if successful
@@ -205,6 +201,21 @@ public class ObjectFunctions {
 			return handleException(String.format("Error occured while clicking '%s'", strObjectName), e);
 		}
 	}
+	
+	public static String getText(WebElement objReqElement, String strObjectName) {
+		switch(objReqElement.getTagName().toUpperCase().trim()) {
+		case "SELECT":
+		case "INPUT":
+			return objReqElement.getAttribute("value");
+		default:
+			return objReqElement.getText();
+		}
+	}
+	
+	public boolean Click(String strObjectName) {
+		WebElement objReqElement = controlObj.getControl(strObjectName);
+		return Click(objReqElement, strObjectName);
+	}
 
 	public boolean ClickLink(String strLinkText) {
 		// WebElement objReqElement =
@@ -217,14 +228,7 @@ public class ObjectFunctions {
 
 	public String getText(String strObjectName) {
 		WebElement objReqElement = controlObj.getControl(strObjectName);
-		switch(objReqElement.getTagName().toUpperCase().trim()) {
-		case "SELECT":
-		case "INPUT":
-			return objReqElement.getAttribute("value");
-		default:
-			return objReqElement.getText();
-		}
-		
+		return getText(objReqElement, strObjectName);
 	}
 
 	public static boolean SelectRadio(java.util.List<WebElement> objReqElements, String strValue) {
