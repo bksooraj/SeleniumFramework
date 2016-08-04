@@ -1,5 +1,8 @@
 package seleniumFramework;
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -88,6 +91,55 @@ public class TextUtilities {
 	public static int getKeyCode(Byte byChar) {
 		Reporter.Log(byChar.toString());
 		return byChar.byteValue();
-		
+
 	}
+
+	public static void sendKeys(Robot r, String strText) {
+		r.setAutoDelay(100);
+		char c;
+		for (int i = 0; i < strText.length(); i++) {
+			c = strText.charAt(i);
+			if (c >= 65 && c <= 90 || c >= 97 && c <= 122) {
+				typeCharacter(r, strText.substring(i, i + 1));
+				System.out.println(strText.substring(i, i + 1));
+			} else {
+				r.keyPress(c);
+				r.keyRelease(c);
+			}
+		}
+
+		/*
+		 * System.out.println(lt + "-" + (int)lt); if((int)lt >= 65 && (int)lt
+		 * <= 90) { r.keyPress(KeyEvent.VK_CAPS_LOCK);
+		 * r.keyRelease(KeyEvent.VK_CAPS_LOCK); r.keyPress(strText.charAt(i));
+		 * r.keyRelease(strText.charAt(i)); r.keyPress(KeyEvent.VK_CAPS_LOCK);
+		 * r.keyRelease(KeyEvent.VK_CAPS_LOCK); } else {
+		 * r.keyPress(strText.charAt(i)); r.keyRelease(strText.charAt(i)); }
+		 */
+	}
+
+	public static void typeCharacter(Robot robot, String letter) {
+		try {
+			boolean upperCase = Character.isUpperCase(letter.charAt(0));
+			String variableName = "VK_" + letter.toUpperCase();
+
+			Class<KeyEvent> clazz = KeyEvent.class;
+			Field field = clazz.getField(variableName);
+			int keyCode = field.getInt(null);
+
+			robot.delay(100);
+
+			if (upperCase)
+				robot.keyPress(KeyEvent.VK_SHIFT);
+
+			robot.keyPress(keyCode);
+			robot.keyRelease(keyCode);
+
+			if (upperCase)
+				robot.keyRelease(KeyEvent.VK_SHIFT);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
 }

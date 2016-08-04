@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.UnexpectedAlertBehaviour;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -13,8 +15,10 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.security.UserAndPassword;
 
 import Fillo.Recordset;
 
@@ -72,14 +76,21 @@ public class SeleniumEngine {
 					blnLaunchBrowser = true;
 				}
 			}
+			
 			if (blnLaunchBrowser) {
 				ChromeDriverService cds = ChromeDriverService.createDefaultService();
 				Capabilities cp = DesiredCapabilities.chrome();
+				((DesiredCapabilities)cp).setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 				WebDriver objWebDriver = new ChromeDriver(cds, cp);
 				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
 				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), cds.getUrl(), brType);
 				Environment.driver = (WebDriver) rwd;
+				Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				try {
 				Environment.driver.get(Config.appURL);
+				} catch (UnhandledAlertException uae) {
+					
+				}
 			}
 			break;
 		case IE:
@@ -107,11 +118,20 @@ public class SeleniumEngine {
 				seleniumFramework.Reporter.Log("Launching Internet Explorer");
 				InternetExplorerDriverService ids = InternetExplorerDriverService.createDefaultService();
 				Capabilities cp = DesiredCapabilities.internetExplorer();
+				((DesiredCapabilities)cp).setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 				WebDriver objWebDriver = new InternetExplorerDriver(ids, cp);
 				RemoteWebDriver rwd = (RemoteWebDriver) objWebDriver;
 				SessionDetails.saveSessionDetails(rwd.getSessionId().toString(), ids.getUrl(), brType);
 				Environment.driver = (WebDriver) rwd;
+				Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+				try {
 				Environment.driver.get(Config.appURL);
+				} catch (UnhandledAlertException unhandledExc) {
+					
+				}
+				/*finally {
+					Environment.driver.switchTo().alert().authenticateUsing(new UserAndPassword("UATBSYS\\s4833463", "Password21"));
+				}*/
 			}
 
 			// Environment.driver = new InternetExplorerDriver();
@@ -120,11 +140,12 @@ public class SeleniumEngine {
 			break;
 		case Firefox:
 			Environment.driver = new FirefoxDriver();
+			Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			Environment.driver.get(Config.appURL);
 			break;
 		}
 
-		Environment.driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+		
 		
 		try {
 			Environment.ObjectFunction = new ObjectFunctions(this);
